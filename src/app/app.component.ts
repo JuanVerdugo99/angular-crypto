@@ -26,15 +26,29 @@ export class AppComponent implements OnInit{
     'Price Change',
     '24h volume',
   ];
+  searchText: string = '';
+  filterCoin: Coin[] = [];
 
   constructor(private http: HttpClient) {}
+ 
+
+  searchCoin() {
+    this.filterCoin = this.coins.filter(coin => 
+      coin.name.toLowerCase().includes(this.searchText.toLowerCase()) ||
+      coin.symbol.toLowerCase().includes(this.searchText.toLowerCase())
+    );
+    console.log(this.searchText)
+  }
 
   ngOnInit() {
     this.http.get<Coin[]>('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false')
       .subscribe(
-        res => this.coins = res,
+        res => {
+          this.coins = res;
+          this.filterCoin = res;
+      },
         err => console.log(err)
-      )
+      );
   }
 
 }
